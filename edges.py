@@ -46,24 +46,30 @@ def getPointsOnEdges(image):
             result.append([len(image),len(image[0])-i])
     return result
 
-def getSquareIndicies((x, y), radius, size):
+def getSquareIndicies((x, y), radius, height, width):
     result = []
     if y-radius>=0:
-        for i in range(max(x-radius,0), min(x+radius,size-1)+1):
+        for i in range(max(x-radius,0), min(x+radius,height-1)+1):
             result.append((i,y-radius))
 
-    if x+radius<size:
-        for i in range(max(y-radius,0) + 1, min(y+radius,size-1)):
+    if x+radius<height:
+        for i in range(max(y-radius,0) + 1, min(y+radius,width-1)):
             result.append((x+radius,i))
 
-    if y+radius<size:
-        for i in reversed(range(max(x-radius,0), min(x+radius,size-1)+1)):
+    if y+radius<width:
+        for i in reversed(range(max(x-radius,0), min(x+radius,height-1)+1)):
             result.append((i,y+radius))
 
     if x-radius>=0:
-            for i in reversed(range(max(y-radius,0) + 1, min(y+radius,size-1))):
+            for i in reversed(range(max(y-radius,0) + 1, min(y+radius,width-1))):
                 result.append((x-radius,i))
     return result
+
+def getIntersectionWithSquare(image, (x,y), radius):
+    for i in getSquareIndicies((x,y), radius, len(image[0]), len(image)):
+        if image[i]:
+            print(i)
+
 
 # get edges 
 img = io.imread('sets/set7/12.png')>127
@@ -78,9 +84,7 @@ points = getPointsOnEdges(diff)
 print points
 
 diff = diff.astype(np.int8)
-
-print(getSquareIndicies((5,4), 4, 10))
-
+getIntersectionWithSquare(diff, (69, 0), 20)
 io.imshow(diff)
 io.show()
 
