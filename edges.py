@@ -46,8 +46,27 @@ def getPointsOnEdges(image):
             result.append([len(image),len(image[0])-i])
     return result
 
+def getSquareIndicies((x, y), radius, size):
+    result = []
+    if y-radius>=0:
+        for i in range(max(x-radius,0), min(x+radius,size-1)+1):
+            result.append((i,y-radius))
+
+    if x+radius<size:
+        for i in range(max(y-radius,0) + 1, min(y+radius,size-1)):
+            result.append((x+radius,i))
+
+    if y+radius<size:
+        for i in reversed(range(max(x-radius,0), min(x+radius,size-1)+1)):
+            result.append((i,y+radius))
+
+    if x-radius>=0:
+            for i in reversed(range(max(y-radius,0) + 1, min(y+radius,size-1))):
+                result.append((x-radius,i))
+    return result
+
 # get edges 
-img = io.imread('sets/set7/0.png')>127
+img = io.imread('sets/set7/12.png')>127
 img_dilatation = ndimage.binary_dilation(img)
 diff = img_dilatation != img
 
@@ -56,9 +75,12 @@ diff = removeBlankRowsAndColumns(diff)
 
 #get points on image edges
 points = getPointsOnEdges(diff)
-
+print points
 
 diff = diff.astype(np.int8)
 
+print(getSquareIndicies((5,4), 4, 10))
+
 io.imshow(diff)
 io.show()
+
