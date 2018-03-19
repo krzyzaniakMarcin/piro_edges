@@ -66,9 +66,18 @@ def getSquareIndicies((x, y), radius, height, width):
     return result
 
 def getIntersectionWithSquare(image, (x,y), radius):
-    for i in getSquareIndicies((x,y), radius, len(image[0]), len(image)):
-        if image[i]:
+    found = False
+
+    square = getSquareIndicies((x,y), radius, len(image[0]), len(image))
+    if image[square[0]] and image[square[-1]]:
+        del square[-1]
+
+    for i in square:
+        if image[i] and not found:
+            found = True
             print(i)
+        else:
+            found = False
 
 
 # get edges 
