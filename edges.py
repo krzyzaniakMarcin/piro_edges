@@ -79,6 +79,15 @@ def getIntersectionWithSquare(image, (x,y), radius):
         else:
             found = False
 
+#angle between vertex(x1,y1) and vertex(x2,y2) in vertex(x,y)
+def calculateAngle((x,y),(x1,y1),(x2,y2)):
+    A = (x2 - x, y2 - y)
+    B = (x1 - x, y1 - y)
+    C = (x2 - x1, y2 - y1)
+
+    num = np.dot(A,B)
+    denom = np.linalg.norm(A) * np.linalg.norm(B)
+    return np.arccos(num/denom)*180 / np.pi
 
 # get edges 
 img = io.imread('sets/set7/12.png')>127
@@ -93,7 +102,12 @@ points = getPointsOnEdges(diff)
 print points
 
 diff = diff.astype(np.int8)
+
 getIntersectionWithSquare(diff, (69, 0), 20)
+
+
+
+
 io.imshow(diff)
 io.show()
 
