@@ -31,19 +31,18 @@ def removeBlankRowsAndColumns(image):
 
 def getPointsOnEdges(image):
     result = []
+
     for i in range(len(image[0])):
         if image[0][i]:
-            result.append([i,0])
-    for i in range(len(image[0])):
+            result.append((0, i))
         if image[len(image)-1][i]:
-            result.append([i,len(image)])
-    image = np.rot90(image, 3)
-    for i in range(len(image[0])):
-        if image[0][i]:
-            result.append([0,len(image[0])-i])
-    for i in range(len(image[0])):
-        if image[len(image)-1][i]:
-            result.append([len(image),len(image[0])-i])
+            result.append((len(image)-1, i))
+
+    for i in range(len(image)):
+        if image[i][0]:
+            result.append((i,0))
+        if image[i][len(image[i])-1]:
+            result.append((i,len(image[i])-1))
     return result
 
 def getSquareIndicies((x, y), radius, height, width):
@@ -68,25 +67,33 @@ def getSquareIndicies((x, y), radius, height, width):
 def getIntersectionWithSquare(image, (x,y), radius):
     found = False
 
-    square = getSquareIndicies((x,y), radius, len(image[0]), len(image))
+    square = getSquareIndicies((x,y), radius, len(image), len(image[0]))
     if image[square[0]] and image[square[-1]]:
         del square[-1]
-
+    result = []
     for i in square:
         if image[i] and not found:
             found = True
-            print(i)
+            result.append(i)
         else:
             found = False
-
+    return result
+A = 0
+B = 0
+C = 0
+num = 0
+denom = 0
 #angle between vertex(x1,y1) and vertex(x2,y2) in vertex(x,y)
 def calculateAngle((x,y),(x1,y1),(x2,y2)):
+    global A, B, C, num, denom
     A = (x2 - x, y2 - y)
     B = (x1 - x, y1 - y)
     C = (x2 - x1, y2 - y1)
 
     num = np.dot(A,B)
     denom = np.linalg.norm(A) * np.linalg.norm(B)
+    if abs(num/denom) > 1:
+        return 180.0
     return np.arccos(num/denom)*180 / np.pi
 
 # get edges 
@@ -97,17 +104,27 @@ diff = img_dilatation != img
 #remove blank lines from image
 diff = removeBlankRowsAndColumns(diff)
 
-#get points on image edges
-points = getPointsOnEdges(diff)
-print points
-
 diff = diff.astype(np.int8)
-
-getIntersectionWithSquare(diff, (69, 0), 20)
-
-
-
 
 io.imshow(diff)
 io.show()
+
+for i in getPointsOnEdges(diff):
+    print i
+    intersection = getIntersectionWithSquare(diff, i, 30)
+    print intersection
+    if len(intersection) == 2:
+        print calculateAngle(i, intersection[0], intersection[1])
+
+for x, row in enumerate(diff):
+    for y, val in enumerate(row):
+        if diff[x][y]:
+            intersection = getIntersectionWithSquare(diff, (x, y), 30)
+            if len(intersection) == 2:
+                print intersection
+                print (x, y)
+                diff[x][y] = 90-abs(90-calculateAngle((x,y), intersection[0], intersection[1]))
+io.imshow(diff)
+io.show()
+
 
