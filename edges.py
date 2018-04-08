@@ -106,8 +106,8 @@ def checkIfPointsAreConnected((x1,y1),(x2,y2),img):
 def distance((x1, y1), (x2, y2)):
     return int(np.sqrt((x1-x2)**2 + (y1-y2)**2))
 
-def getAngle((x,y), radious, when_no_angle = 0):
-    intersection = getIntersectionWithSquare(diff, (x, y), radious)
+def getAngle((x,y), radious, img, when_no_angle = 0):
+    intersection = getIntersectionWithSquare(img, (x, y), radious)
     if len(intersection) == 2:
         return calculateAngle((x,y), intersection[0], intersection[1])
     else:
@@ -136,20 +136,20 @@ def read_img(num):
     return diff, points
 
 
-def get_hull():
+def get_hull(points, img):
     hull = points[ConvexHull(points).vertices]
     hull = list(map(tuple, hull))
-    hull = list(filter(lambda x : getAngle(x, 15) < 170, hull))
+    hull = list(filter(lambda x : getAngle(x, 15,img) < 170, hull))
     return hull
 
-def get_right_angles(hull):
+def get_right_angles(hull, img):
     possible = []
     for (x, y) in hull:
-        if diff[x][y]:
+        if img[x][y]:
             angle_big, angle_small = 0, 0
 
-            angle_big = 90-abs(90-getAngle((x, y), 30))
-            angle_small = 90-abs(90-getAngle((x, y), 10))
+            angle_big = 90-abs(90-getAngle((x, y), 30,img))
+            angle_small = 90-abs(90-getAngle((x, y), 10,img))
 
             if angle_small > 65 and angle_big > 65:
                 possible.append((x, y))
@@ -168,50 +168,65 @@ def get_right_angles(hull):
     right_angles = [tab[len(tab)/2] for tab in groups.values()]
     return right_angles
 
-def getConnected(right_angles):
+def getConnected(right_angles, img):
     s = []
     for i in range(len(right_angles) - 1):
         for j in range(i + 1, len(right_angles)):
             p1 = right_angles[i]
             p2 = right_angles[j]
-            connected = checkIfPointsAreConnected(p1, p2, diff)
+            connected = checkIfPointsAreConnected(p1, p2, img)
             print p1, p2, connected
             if connected:
                 s.append((p1, p2))
     return s
 
-for i in [12]:
-    diff, points = read_img(i)
-    hull = get_hull()
-    right_angles = get_right_angles(hull)
+def getRectangleVertices(diff, points):
+    hull = get_hull(points,diff)
+    right_angles = get_right_angles(hull,diff)
     to_show = np.copy(diff)
 
-    for point in right_angles:
-        to_show[point] = 3
-
-    connected = getConnected(right_angles)
-    ok = [0, 0]
-    best = [(0,0),(1,1),0]
+    connected = getConnected(right_angles, diff)
+    best = ((0,0), (1,1), (0,0), (0,0), 0)
     for p1, p2 in connected:
+        ok = [0, 0]
+        h1 = h2 = 0
         for h in hull:
             d1 = distance(p1, h)
             if d1 > 40:
                 if checkIfPointsAreConnected(p1, h, diff) and not checkIfPointsAreConnected(p2, h, diff):
-                    ok[0] = max(d1, ok[0])
+                    if d1 > ok[0]:
+                        ok[0] = d1
+                        h1 = h
             d2 = distance(p2, h)
             if d2 > 40:
                 if checkIfPointsAreConnected(p2, h, diff) and not checkIfPointsAreConnected(p1, h, diff):
-                    ok[1] = max(d2, ok[1])
-        if min(ok) > best[2]:
-            best = [p1,p2, min(ok)]
-    print best
+                    if d2 > ok[1]:
+                        ok[1] = d2
+                        h2 = h
+        if min(ok) > best[4]:
+            best = (p1, p2, h1, h2, min(ok))
+    p1, p2, h1, h2, _ = best
+    to_show[p1] = 2
+    to_show[p2] = 2
+    to_show[h1] = 2
+    to_show[h2] = 2
 
+    print (p1,p2,h1,h2)
     io.imshow(to_show)
     io.show()
+    return(p1,p2,h1,h2)
 
-    # pts1 = np.float32([[60,250],[205,435],[602,250],[480,60]])
-    # pts2 = np.float32([[0,0],[0,300],[500,300],[500,0]])
-    # M = cv2.getPerspectiveTransform(pts1,pts2)
+def transformImage(image_number):
+    img, points = read_img(image_number)
+    vertices = getRectangleVertices(img, points)
 
-    # io.imshow(revertTransformation(diff,M))
-    # io.show()
+    img = io.imread('sets/set7/' + str(image_number) + '.png')>127
+
+    pts1 = np.float32([vertices[0][::-1],vertices[2][::-1],vertices[3][::-1],vertices[1][::-1]])
+    pts2 = np.float32([[0,0],[0,300],[500,300],[500,0]])
+    M = cv2.getPerspectiveTransform(pts1,pts2)
+
+    io.imshow(revertTransformation(img,M))
+    io.show()
+
+transformImage(13)
