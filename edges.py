@@ -116,7 +116,7 @@ def getAngle((x,y), radious, when_no_angle = 0):
 # get edges 
 def revertTransformation(img, transformation):
     rgbArray = np.zeros((len(img),len(img[0]),3), 'uint8')
-    rgbArray[..., 0] =img*255
+    rgbArray[..., 0] = img*255
     rgbArray[..., 1] = img*255
     rgbArray[..., 2] = img*255
     return cv2.warpPerspective(rgbArray,transformation,(500,600))
@@ -169,7 +169,7 @@ def get_right_angles(hull):
     return right_angles
 
 def getConnected(right_angles):
-    s = set()
+    s = []
     for i in range(len(right_angles) - 1):
         for j in range(i + 1, len(right_angles)):
             p1 = right_angles[i]
@@ -177,9 +177,8 @@ def getConnected(right_angles):
             connected = checkIfPointsAreConnected(p1, p2, diff)
             print p1, p2, connected
             if connected:
-                s.add(p1)
-                s.add(p2)
-    return list(s)
+                s.append((p1, p2))
+    return s
 
 for i in [12]:
     diff, points = read_img(i)
@@ -191,17 +190,28 @@ for i in [12]:
         to_show[point] = 3
 
     connected = getConnected(right_angles)
-    for point in connected:
-        to_show[point] = 4
+    ok = [0, 0]
+    best = [(0,0),(1,1),0]
+    for p1, p2 in connected:
+        for h in hull:
+            d1 = distance(p1, h)
+            if d1 > 40:
+                if checkIfPointsAreConnected(p1, h, diff) and not checkIfPointsAreConnected(p2, h, diff):
+                    ok[0] = max(d1, ok[0])
+            d2 = distance(p2, h)
+            if d2 > 40:
+                if checkIfPointsAreConnected(p2, h, diff) and not checkIfPointsAreConnected(p1, h, diff):
+                    ok[1] = max(d2, ok[1])
+        if min(ok) > best[2]:
+            best = [p1,p2, min(ok)]
+    print best
 
     io.imshow(to_show)
     io.show()
 
+    # pts1 = np.float32([[60,250],[205,435],[602,250],[480,60]])
+    # pts2 = np.float32([[0,0],[0,300],[500,300],[500,0]])
+    # M = cv2.getPerspectiveTransform(pts1,pts2)
 
-
-    pts1 = np.float32([[204,434],[604,246],[476,34],[55,246]])
-    pts2 = np.float32([[0,0],[0,300],[500,300],[500,0]])
-    M = cv2.getPerspectiveTransform(pts1,pts2)
-
-    io.imshow(revertTransformation(diff,M))
-    io.show()
+    # io.imshow(revertTransformation(diff,M))
+    # io.show()
