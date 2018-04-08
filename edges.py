@@ -117,10 +117,7 @@ points = np.array(points)
 hull = points[ConvexHull(points).vertices]
 hull = list(map(tuple, hull))
 for i in hull:
-    diff[i] = 2
-
-io.imshow(diff)
-io.show()
+    diff[i] = 5
 
 to_show = np.copy(diff)
 
