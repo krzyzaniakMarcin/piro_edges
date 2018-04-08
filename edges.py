@@ -186,11 +186,8 @@ for i in [12]:
     right_angles = get_right_angles(hull)
     to_show = np.copy(diff)
 
-    for point in right_angles:
-        to_show[point] = 3
-
     connected = getConnected(right_angles)
-    best = [(0,0),(1,1),0]
+    best = ((0,0), (1,1), 0)
     for p1, p2 in connected:
         ok = [0, 0]
         for h in hull:
@@ -203,8 +200,10 @@ for i in [12]:
                 if checkIfPointsAreConnected(p2, h, diff) and not checkIfPointsAreConnected(p1, h, diff):
                     ok[1] = max(d2, ok[1])
         if min(ok) > best[2]:
-            best = [p1,p2, min(ok)]
-    print best
+            best = (p1, p2, min(ok))
+    p1, p2, _  = best
+    to_show[p1] = 2
+    to_show[p2] = 2
 
     io.imshow(to_show)
     io.show()
