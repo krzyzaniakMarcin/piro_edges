@@ -106,22 +106,9 @@ def checkIfPointsAreConnected((x1,y1),(x2,y2),img):
         if len(getIntersectionWithSquare(img,(x,y),2))==0:
             return False
     return True
+
 def distance((x1, y1), (x2, y2)):
     return int(np.sqrt((x1-x2)**2 + (y1-y2)**2))
-
-
-# get edges 
-img = io.imread('sets/set7/12.png')>127
-img_dilatation = ndimage.binary_dilation(img)
-diff = img_dilatation != img
-
-diff = diff.astype(np.int8)
-
-points = []
-for x, row in enumerate(diff):
-    for y, val in enumerate(row):
-        if diff[x][y]:
-            points.append((x, y))
 
 def getAngle((x,y), radious, when_no_angle = 0):
     intersection = getIntersectionWithSquare(diff, (x, y), radious)
@@ -130,53 +117,84 @@ def getAngle((x,y), radious, when_no_angle = 0):
     else:
         return when_no_angle
 
-points = np.array(points)
+# get edges 
+diff = []
+points = []
 
-hull = points[ConvexHull(points).vertices]
-hull = list(map(tuple, hull))
-hull = list(filter(lambda x : getAngle(x, 15) < 170, hull))
-for i in hull:
-    diff[i] = 2
+def read_img(num):
+    img = io.imread('sets/set7/' + str(num) + '.png')>127
+    img_dilatation = ndimage.binary_dilation(img)
+    diff = img_dilatation != img
+    diff = diff.astype(np.int8)
 
-to_show = np.copy(diff)
-
-possible = []
-for (x, y) in hull:
-    if diff[x][y]:
-        angle_big, angle_small = 0, 0
-
-        angle_big = 90-abs(90-getAngle((x, y), 30))
-        angle_small = 90-abs(90-getAngle((x, y), 10))
-
-        if angle_small > 65 and angle_big > 65:
-            possible.append((x, y))
-
-groups = {}
-for point in possible:
-    added = False
-    for k in groups:
-        if distance(point, k) < 10:
-            added = True
-            groups[k].append(point)
-            break
-    if not added:
-        groups[point] = [point]
-
-right_angles = [tab[len(tab)/2] for tab in groups.values()]
-
-for point in right_angles:
-    to_show[point] = 5
-
-for i in range(len(right_angles) - 1):
-    for j in range(i + 1, len(right_angles)):
-        p1 = right_angles[i]
-        p2 = right_angles[j]
-        connected = checkIfPointsAreConnected(p1, p2, diff)
-        print p1, p2, connected
-        if connected:
-            to_show[p1] = 8
-            to_show[p2] = 8
+    points = []
+    for x, row in enumerate(diff):
+        for y, val in enumerate(row):
+            if diff[x][y]:
+                points.append((x, y))
+    points = np.array(points)
+    return diff, points
 
 
-io.imshow(to_show)
-io.show()
+def get_hull():
+    hull = points[ConvexHull(points).vertices]
+    hull = list(map(tuple, hull))
+    hull = list(filter(lambda x : getAngle(x, 15) < 170, hull))
+    return hull
+
+def get_right_angles(hull):
+    possible = []
+    for (x, y) in hull:
+        if diff[x][y]:
+            angle_big, angle_small = 0, 0
+
+            angle_big = 90-abs(90-getAngle((x, y), 30))
+            angle_small = 90-abs(90-getAngle((x, y), 10))
+
+            if angle_small > 65 and angle_big > 65:
+                possible.append((x, y))
+
+    groups = {}
+    for point in possible:
+        added = False
+        for k in groups:
+            if distance(point, k) < 10:
+                added = True
+                groups[k].append(point)
+                break
+        if not added:
+            groups[point] = [point]
+
+    right_angles = [tab[len(tab)/2] for tab in groups.values()]
+    return right_angles
+
+def getConnected(right_angles):
+    s = set()
+    for i in range(len(right_angles) - 1):
+        for j in range(i + 1, len(right_angles)):
+            p1 = right_angles[i]
+            p2 = right_angles[j]
+            connected = checkIfPointsAreConnected(p1, p2, diff)
+            print p1, p2, connected
+            if connected:
+                s.add(p1)
+                s.add(p2)
+    return list(s)
+
+for i in [12]:
+    diff, points = read_img(i)
+    hull = get_hull()
+    right_angles = get_right_angles(hull)
+    to_show = np.copy(diff)
+
+    for point in right_angles:
+        to_show[point] = 3
+
+    connected = getConnected(right_angles)
+    for point in connected:
+        to_show[point] = 4
+
+    io.imshow(to_show)
+    io.show()
+
+
