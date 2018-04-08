@@ -4,8 +4,9 @@ import skimage.io as io
 import skimage.data as data
 import skimage.color as color
 import skimage
+from scipy.misc import toimage
+import cv2
 import matplotlib as mpl
-import math
 import scipy.ndimage as ndimage
 from scipy.spatial import ConvexHull
 from skimage import data, io, filters
@@ -109,9 +110,15 @@ def checkIfPointsAreConnected((x1,y1),(x2,y2),img):
 def distance((x1, y1), (x2, y2)):
     return int(np.sqrt((x1-x2)**2 + (y1-y2)**2))
 
+def revertTransformation(img, transformation):
+    rgbArray = np.zeros((len(img),len(img[0]),3), 'uint8')
+    rgbArray[..., 0] =img*255
+    rgbArray[..., 1] = img*255
+    rgbArray[..., 2] = img*255
+    return cv2.warpPerspective(rgbArray,transformation,(500,600))
 
 # get edges 
-img = io.imread('sets/set7/12.png')>127
+img = io.imread('sets/set7/13.png')>127
 img_dilatation = ndimage.binary_dilation(img)
 diff = img_dilatation != img
 
@@ -164,5 +171,10 @@ right_angles = [tab[len(tab)/2] for tab in groups.values()]
 for point in right_angles:
     to_show[point] = 5
 
-io.imshow(to_show)
+
+pts1 = np.float32([[68,607],[306,614],[250,62],[57,102]])
+pts2 = np.float32([[0,0],[0,300],[500,300],[500,0]])
+M = cv2.getPerspectiveTransform(pts1,pts2)
+
+io.imshow(revertTransformation(diff,M))
 io.show()
