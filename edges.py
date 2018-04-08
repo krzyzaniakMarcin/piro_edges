@@ -180,30 +180,37 @@ def getConnected(right_angles):
                 s.append((p1, p2))
     return s
 
-for i in [12]:
+for i in range(13):
     diff, points = read_img(i)
     hull = get_hull()
     right_angles = get_right_angles(hull)
     to_show = np.copy(diff)
 
     connected = getConnected(right_angles)
-    best = ((0,0), (1,1), 0)
+    best = ((0,0), (1,1), (0,0), (0,0), 0)
     for p1, p2 in connected:
         ok = [0, 0]
+        h1 = h2 = 0
         for h in hull:
             d1 = distance(p1, h)
             if d1 > 40:
                 if checkIfPointsAreConnected(p1, h, diff) and not checkIfPointsAreConnected(p2, h, diff):
-                    ok[0] = max(d1, ok[0])
+                    if d1 > ok[0]:
+                        ok[0] = d1
+                        h1 = h
             d2 = distance(p2, h)
             if d2 > 40:
                 if checkIfPointsAreConnected(p2, h, diff) and not checkIfPointsAreConnected(p1, h, diff):
-                    ok[1] = max(d2, ok[1])
-        if min(ok) > best[2]:
-            best = (p1, p2, min(ok))
-    p1, p2, _  = best
+                    if d2 > ok[1]:
+                        ok[1] = d2
+                        h2 = h
+        if min(ok) > best[4]:
+            best = (p1, p2, h1, h2, min(ok))
+    p1, p2, h1, h2, _ = best
     to_show[p1] = 2
     to_show[p2] = 2
+    to_show[h1] = 2
+    to_show[h2] = 2
 
     io.imshow(to_show)
     io.show()
