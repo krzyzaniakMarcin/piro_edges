@@ -167,5 +167,16 @@ right_angles = [tab[len(tab)/2] for tab in groups.values()]
 for point in right_angles:
     to_show[point] = 5
 
+for i in range(len(right_angles) - 1):
+    for j in range(i + 1, len(right_angles)):
+        p1 = right_angles[i]
+        p2 = right_angles[j]
+        connected = checkIfPointsAreConnected(p1, p2, diff)
+        print p1, p2, connected
+        if connected:
+            to_show[p1] = 8
+            to_show[p2] = 8
+
+
 io.imshow(to_show)
 io.show()
