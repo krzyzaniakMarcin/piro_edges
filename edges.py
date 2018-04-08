@@ -5,6 +5,7 @@ import skimage.data as data
 import skimage.color as color
 import skimage
 import matplotlib as mpl
+import math
 import scipy.ndimage as ndimage
 from scipy.spatial import ConvexHull
 from skimage import data, io, filters
@@ -97,12 +98,22 @@ def calculateAngle((x,y),(x1,y1),(x2,y2)):
         return 180.0
     return np.arccos(num/denom)*180 / np.pi
 
+def getLineLength((x1,y1),(x2,y2)):
+    return int(math.sqrt((x1-x2)**2+(y1-y2)**2))
+
+def checkIfPointsAreConnected((x1,y1),(x2,y2),img):
+    number =  getLineLength((x1,y1),(x2,y2))
+    for i in range(1,number+1):
+        x = x1 + (x2-x1)*i/(number+1)
+        y = y1 + (y2-y1)*i/(number+1)
+        if len(getIntersectionWithSquare(img,(x,y),2))==0:
+            return False
+    return True
+
 # get edges 
 img = io.imread('sets/set7/12.png')>127
 img_dilatation = ndimage.binary_dilation(img)
 diff = img_dilatation != img
-
-#remove blank lines from image
 
 diff = diff.astype(np.int8)
 
