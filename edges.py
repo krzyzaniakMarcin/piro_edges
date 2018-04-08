@@ -98,17 +98,17 @@ def calculateAngle((x,y),(x1,y1),(x2,y2)):
         return 180.0
     return np.arccos(num/denom)*180 / np.pi
 
-def getLineLength((x1,y1),(x2,y2)):
-    return int(math.sqrt((x1-x2)**2+(y1-y2)**2))
-
 def checkIfPointsAreConnected((x1,y1),(x2,y2),img):
-    number =  getLineLength((x1,y1),(x2,y2))
+    number =  distance((x1,y1),(x2,y2))
     for i in range(1,number+1):
         x = x1 + (x2-x1)*i/(number+1)
         y = y1 + (y2-y1)*i/(number+1)
         if len(getIntersectionWithSquare(img,(x,y),2))==0:
             return False
     return True
+def distance((x1, y1), (x2, y2)):
+    return int(np.sqrt((x1-x2)**2 + (y1-y2)**2))
+
 
 # get edges 
 img = io.imread('sets/set7/12.png')>127
@@ -128,10 +128,11 @@ points = np.array(points)
 hull = points[ConvexHull(points).vertices]
 hull = list(map(tuple, hull))
 for i in hull:
-    diff[i] = 5
+    diff[i] = 2
 
 to_show = np.copy(diff)
 
+possible = []
 for (x, y) in hull:
     if diff[x][y]:
         angle_big, angle_small = 0, 0
@@ -145,9 +146,23 @@ for (x, y) in hull:
             angle_small = 90-abs(90-calculateAngle((x,y), intersection[0], intersection[1]))
 
         if angle_small > 65 and angle_big > 65:
-            to_show[x][y] = 10
+            possible.append((x, y))
+
+groups = {}
+for point in possible:
+    added = False
+    for k in groups:
+        if distance(point, k) < 10:
+            added = True
+            groups[k].append(point)
+            break
+    if not added:
+        groups[point] = [point]
+
+right_angles = [tab[len(tab)/2] for tab in groups.values()]
+
+for point in right_angles:
+    to_show[point] = 5
 
 io.imshow(to_show)
 io.show()
-
-
