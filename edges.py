@@ -103,7 +103,6 @@ img_dilatation = ndimage.binary_dilation(img)
 diff = img_dilatation != img
 
 #remove blank lines from image
-diff = removeBlankRowsAndColumns(diff)
 
 diff = diff.astype(np.int8)
 
@@ -127,9 +126,18 @@ to_show = np.copy(diff)
 
 for (x, y) in hull:
     if diff[x][y]:
+        angle_big, angle_small = 0, 0
+
         intersection = getIntersectionWithSquare(diff, (x, y), 30)
         if len(intersection) == 2:
-            to_show[x][y] = 90-abs(90-calculateAngle((x,y), intersection[0], intersection[1]))
+            angle_big = 90-abs(90-calculateAngle((x,y), intersection[0], intersection[1]))
+
+        intersection = getIntersectionWithSquare(diff, (x, y), 10)
+        if len(intersection) == 2:
+            angle_small = 90-abs(90-calculateAngle((x,y), intersection[0], intersection[1]))
+
+        if angle_small > 65 and angle_big > 65:
+            to_show[x][y] = 10
 
 io.imshow(to_show)
 io.show()
