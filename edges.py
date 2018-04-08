@@ -6,6 +6,7 @@ import skimage.color as color
 import skimage
 import matplotlib as mpl
 import scipy.ndimage as ndimage
+from scipy.spatial import ConvexHull
 from skimage import data, io, filters
 
 def removeBlankRows(image):
@@ -106,25 +107,31 @@ diff = removeBlankRowsAndColumns(diff)
 
 diff = diff.astype(np.int8)
 
-io.imshow(diff)
-io.show()
-
-for i in getPointsOnEdges(diff):
-    print i
-    intersection = getIntersectionWithSquare(diff, i, 30)
-    print intersection
-    if len(intersection) == 2:
-        print calculateAngle(i, intersection[0], intersection[1])
-
+points = []
 for x, row in enumerate(diff):
     for y, val in enumerate(row):
         if diff[x][y]:
-            intersection = getIntersectionWithSquare(diff, (x, y), 30)
-            if len(intersection) == 2:
-                print intersection
-                print (x, y)
-                diff[x][y] = 90-abs(90-calculateAngle((x,y), intersection[0], intersection[1]))
+            points.append((x, y))
+
+points = np.array(points)
+
+hull = points[ConvexHull(points).vertices]
+hull = list(map(tuple, hull))
+for i in hull:
+    diff[i] = 2
+
 io.imshow(diff)
+io.show()
+
+to_show = np.copy(diff)
+
+for (x, y) in hull:
+    if diff[x][y]:
+        intersection = getIntersectionWithSquare(diff, (x, y), 30)
+        if len(intersection) == 2:
+            to_show[x][y] = 90-abs(90-calculateAngle((x,y), intersection[0], intersection[1]))
+
+io.imshow(to_show)
 io.show()
 
 
