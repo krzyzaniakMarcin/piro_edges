@@ -4,8 +4,9 @@ import skimage.io as io
 import skimage.data as data
 import skimage.color as color
 import skimage
+from scipy.misc import toimage
+import cv2
 import matplotlib as mpl
-import math
 import scipy.ndimage as ndimage
 from scipy.spatial import ConvexHull
 from skimage import data, io, filters
@@ -80,14 +81,9 @@ def getIntersectionWithSquare(image, (x,y), radius):
         else:
             found = False
     return result
-A = 0
-B = 0
-C = 0
-num = 0
-denom = 0
+
 #angle between vertex(x1,y1) and vertex(x2,y2) in vertex(x,y)
 def calculateAngle((x,y),(x1,y1),(x2,y2)):
-    global A, B, C, num, denom
     A = (x2 - x, y2 - y)
     B = (x1 - x, y1 - y)
     C = (x2 - x1, y2 - y1)
@@ -118,8 +114,12 @@ def getAngle((x,y), radious, when_no_angle = 0):
         return when_no_angle
 
 # get edges 
-diff = []
-points = []
+def revertTransformation(img, transformation):
+    rgbArray = np.zeros((len(img),len(img[0]),3), 'uint8')
+    rgbArray[..., 0] =img*255
+    rgbArray[..., 1] = img*255
+    rgbArray[..., 2] = img*255
+    return cv2.warpPerspective(rgbArray,transformation,(500,600))
 
 def read_img(num):
     img = io.imread('sets/set7/' + str(num) + '.png')>127
@@ -198,3 +198,10 @@ for i in [12]:
     io.show()
 
 
+
+    pts1 = np.float32([[204,434],[604,246],[476,34],[55,246]])
+    pts2 = np.float32([[0,0],[0,300],[500,300],[500,0]])
+    M = cv2.getPerspectiveTransform(pts1,pts2)
+
+    io.imshow(revertTransformation(diff,M))
+    io.show()
