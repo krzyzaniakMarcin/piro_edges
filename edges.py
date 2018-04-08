@@ -123,10 +123,18 @@ for x, row in enumerate(diff):
         if diff[x][y]:
             points.append((x, y))
 
+def getAngle((x,y), radious, when_no_angle = 0):
+    intersection = getIntersectionWithSquare(diff, (x, y), radious)
+    if len(intersection) == 2:
+        return calculateAngle((x,y), intersection[0], intersection[1])
+    else:
+        return when_no_angle
+
 points = np.array(points)
 
 hull = points[ConvexHull(points).vertices]
 hull = list(map(tuple, hull))
+hull = list(filter(lambda x : getAngle(x, 15) < 170, hull))
 for i in hull:
     diff[i] = 2
 
@@ -137,13 +145,8 @@ for (x, y) in hull:
     if diff[x][y]:
         angle_big, angle_small = 0, 0
 
-        intersection = getIntersectionWithSquare(diff, (x, y), 30)
-        if len(intersection) == 2:
-            angle_big = 90-abs(90-calculateAngle((x,y), intersection[0], intersection[1]))
-
-        intersection = getIntersectionWithSquare(diff, (x, y), 10)
-        if len(intersection) == 2:
-            angle_small = 90-abs(90-calculateAngle((x,y), intersection[0], intersection[1]))
+        angle_big = 90-abs(90-getAngle((x, y), 30))
+        angle_small = 90-abs(90-getAngle((x, y), 10))
 
         if angle_small > 65 and angle_big > 65:
             possible.append((x, y))
