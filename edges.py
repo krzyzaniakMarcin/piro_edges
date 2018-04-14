@@ -11,6 +11,9 @@ import scipy.ndimage as ndimage
 from scipy.spatial import ConvexHull
 from skimage import data, io, filters
 
+IMAGES = 100
+SET = 8
+
 def removeBlankRows(image):
     x_begin = -1
     x_end = -1
@@ -122,7 +125,7 @@ def revertTransformation(img, transformation):
     return cv2.warpPerspective(rgbArray,transformation,(800,600))
 
 def read_img(num):
-    img = io.imread('sets/set8/' + str(num) + '.png')>127
+    img = io.imread('sets/set' + str(SET) + '/' + str(num) + '.png')>127
     img_dilatation = ndimage.binary_dilation(img)
     diff = img_dilatation != img
     diff = diff.astype(np.int8)
@@ -214,7 +217,7 @@ def getRectangleVertices(diff, points):
 def transformImage(image_number):
     img, points = read_img(image_number)
     vertices = getRectangleVertices(img, points)
-    img = io.imread('sets/set8/' + str(image_number) + '.png')>127
+    img = io.imread('sets/set' + str(SET) + '/' + str(image_number) + '.png')>127
 
     pts1 = np.float32([vertices[0][::-1],vertices[2][::-1],vertices[3][::-1],vertices[1][::-1]])
     pts2 = np.float32([[0,599],[0,600*distance(pts1[2],pts1[3])/(distance(pts1[2],pts1[3])+distance(pts1[1],pts1[0]))],[800,600*distance(pts1[0],pts1[1])/(distance(pts1[0],pts1[1])+distance(pts1[2],pts1[3]))],[800,599]])
@@ -231,9 +234,11 @@ def getImageEdge(image_number):
         else:
             tab.append(0)
     minn = min(tab)
-    return np.array((map(lambda x: x - minn, tab)))
+    maxx = max(tab)
+    if maxx == minn:
+        maxx += 1
+    return np.array((map(lambda x: ((x - minn) / float(maxx - minn)) * 250, tab)))
 
-IMAGES = 20
 edges = {}
 for i in range(IMAGES):
     print(i)
@@ -248,23 +253,37 @@ for l in range(IMAGES):
     for i in range(IMAGES):
         if i != l:
             cur_min = 99999999
+            min_i = 0
             for edge in edges[i]:
                 diff = map(abs, edge - super_edge)
-                fig = plt.figure()
-                fig.add_subplot(1,5,1)
-                plt.plot(super_edge)
-                fig.add_subplot(1,5,2)
-                plt.plot(edge)
-                fig.add_subplot(1,5,3)
-                plt.plot(diff)
-                fig.add_subplot(1,5,4)
-                plt.imshow(transformImage(l))
-                fig.add_subplot(1,5,5)
-                plt.imshow(transformImage(i))
-                plt.show()
+                # fig = plt.figure()
+                # fig.add_subplot(1,5,1)
+                # plt.plot(super_edge)
+                # fig.add_subplot(1,5,2)
+                # plt.plot(edge)
+                # fig.add_subplot(1,5,3)
+                # plt.plot(diff)
+                # fig.add_subplot(1,5,4)
+                # plt.imshow(transformImage(l))
+                # fig.add_subplot(1,5,5)
+                # plt.imshow(transformImage(i))
+                # plt.show()
                 diff = sum(diff)
                 if diff < cur_min:
                     cur_min = diff
-            minn.append((cur_min, i))
+                    min_i = edge
+            minn.append((cur_min, i, min_i))
     rank = sorted(minn, key = lambda x: x[0])
-    print rank[0:5]
+    lol = rank[0]
+    print(lol[0:2])
+    fig = plt.figure()
+    fig.add_subplot(1,4,1)
+    plt.plot(super_edge)
+    plt.plot(lol[2])
+    fig.add_subplot(1,4,2)
+    plt.plot(map(abs, super_edge - lol[2]))
+    fig.add_subplot(1,4,3)
+    plt.imshow(transformImage(l))
+    fig.add_subplot(1,4,4)
+    plt.imshow(transformImage(lol[1]))
+    plt.show()
