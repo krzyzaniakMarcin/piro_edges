@@ -14,6 +14,8 @@ from skimage import data, io, filters
 IMAGES = 100
 SET = 8
 
+SETS = [(1,20), (2,20), (3,20), (4,20), (5,200),(6,200),(7,20),(8,100)]
+
 def removeBlankRows(image):
     x_begin = -1
     x_end = -1
@@ -244,69 +246,73 @@ def getImageEdge(image_number):
     if maxx == minn:
         maxx += 1
     return np.array((map(lambda x: ((x - minn) / float(maxx - minn)) * 250, tab)))
-
-edges = {}
-for i in range(IMAGES):
-    print(i)
-    edge = getImageEdge(i)
-    maxx = max(edge)
-    rev = np.array((map(lambda x: maxx - x, edge)))
-    edges[i] = [edge, edge[::-1], rev, rev[::-1]]
-
-file = open('sets/set' + str(SET) + '/' + 'correct.txt', "r")
 score = 0
-for l in range(IMAGES):
-    super_edge = edges[l][0]
-    minn = []
+
+for sett in SETS:
+    SET = sett[0]
+    IMAGES = sett[1]
+    edges = {}
     for i in range(IMAGES):
-        if i != l:
-            cur_min = 99999999
-            min_i = 0
-            for edge in edges[i]:
-                diff = map(abs, edge - super_edge)
-                # fig = plt.figure()
-                # fig.add_subplot(1,5,1)
-                # plt.plot(super_edge)
-                # fig.add_subplot(1,5,2)
-                # plt.plot(edge)
-                # fig.add_subplot(1,5,3)
-                # plt.plot(diff)
-                # fig.add_subplot(1,5,4)
-                # plt.imshow(transformImage(l))
-                # fig.add_subplot(1,5,5)
-                # plt.imshow(transformImage(i))
-                # plt.show()
-                diff = sum(diff)
-                if diff < cur_min:
-                    cur_min = diff
-                    min_i = edge
-            minn.append((cur_min, i, min_i))
-    rank = sorted(minn, key = lambda x: x[0])
-    lol = rank[0]
-    line = int(file.readline())
-    bad = True
-    for asd in range(5):
-        if line == rank[asd][1]:
-            score +=1.0/(asd+1.0)
-            bad = False
-    if bad and line not in fifolowe and l not in fifolowe:
-        print "ZLE W KIT"
-        print 'current: ', l, 'correct: ', line, 'choosed: ', lol[1]
-        transformImage(l, True)
-        transformImage(line, True)
-        fig = plt.figure()
-        fig.add_subplot(2,3,1)
-        plt.plot(super_edge)
-        plt.plot(lol[2])
-        fig.add_subplot(2,3,2)
-        plt.plot(map(abs, super_edge - lol[2]))
-        fig.add_subplot(2,3,4)
-        plt.imshow(transformImage(l))
-        fig.add_subplot(2,3,5)
-        plt.imshow(transformImage(lol[1]))
-        fig.add_subplot(2,3,3)
-        plt.plot(getImageEdge(line))
-        fig.add_subplot(2,3,6)
-        plt.imshow(transformImage(line))
-        plt.show()
+        print(i)
+        edge = getImageEdge(i)
+        maxx = max(edge)
+        rev = np.array((map(lambda x: maxx - x, edge)))
+        edges[i] = [edge, edge[::-1], rev, rev[::-1]]
+        
+    file = open('sets/set' + str(SET) + '/' + 'correct.txt', "r")
+    for l in range(IMAGES):
+        super_edge = edges[l][0]
+        minn = []
+        for i in range(IMAGES):
+            if i != l:
+                cur_min = 99999999
+                min_i = 0
+                for edge in edges[i]:
+                    diff = map(abs, edge - super_edge)
+                    # fig = plt.figure()
+                    # fig.add_subplot(1,5,1)
+                    # plt.plot(super_edge)
+                    # fig.add_subplot(1,5,2)
+                    # plt.plot(edge)
+                    # fig.add_subplot(1,5,3)
+                    # plt.plot(diff)
+                    # fig.add_subplot(1,5,4)
+                    # plt.imshow(transformImage(l))
+                    # fig.add_subplot(1,5,5)
+                    # plt.imshow(transformImage(i))
+                    # plt.show()
+                    diff = sum(diff)
+                    if diff < cur_min:
+                        cur_min = diff
+                        min_i = edge
+                minn.append((cur_min, i, min_i))
+        rank = sorted(minn, key = lambda x: x[0])
+        lol = rank[0]
+        line = int(file.readline())
+        bad = True
+        for asd in range(5):
+            if line == rank[asd][1]:
+                score +=1.0/(asd+1.0)
+                bad = False
+        if bad and line not in fifolowe and l not in fifolowe:
+            print "ZLE W KIT"
+            print 'current: ', l, 'correct: ', line, 'choosed: ', lol[1]
+            # transformImage(l, True)
+            # transformImage(line, True)
+            # fig = plt.figure()
+            # fig.add_subplot(2,3,1)
+            # plt.plot(super_edge)
+            # plt.plot(lol[2])
+            # fig.add_subplot(2,3,2)
+            # plt.plot(map(abs, super_edge - lol[2]))
+            # fig.add_subplot(2,3,4)
+            # plt.imshow(transformImage(l))
+            # fig.add_subplot(2,3,5)
+            # plt.imshow(transformImage(lol[1]))
+            # fig.add_subplot(2,3,3)
+            # plt.plot(getImageEdge(line))
+            # fig.add_subplot(2,3,6)
+            # plt.imshow(transformImage(line))
+            # plt.show()
+    print score
 print score
