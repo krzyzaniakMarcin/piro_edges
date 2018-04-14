@@ -99,7 +99,7 @@ def checkIfPointsAreConnected((x1,y1),(x2,y2),img):
     for i in range(1,number+1):
         x = x1 + (x2-x1)*i/(number+1)
         y = y1 + (y2-y1)*i/(number+1)
-        if len(getIntersectionWithSquare(img,(x,y),2))==0:
+        if len(getIntersectionWithSquare(img,(x,y),3))==0:
             return False
     return True
 
@@ -119,10 +119,10 @@ def revertTransformation(img, transformation):
     rgbArray[..., 0] = img*255
     rgbArray[..., 1] = img*255
     rgbArray[..., 2] = img*255
-    return cv2.warpPerspective(rgbArray,transformation,(500,600))
+    return cv2.warpPerspective(rgbArray,transformation,(800,600))
 
 def read_img(num):
-    img = io.imread('sets/set7/' + str(num) + '.png')>127
+    img = io.imread('sets/set8/' + str(num) + '.png')>127
     img_dilatation = ndimage.binary_dilation(img)
     diff = img_dilatation != img
     diff = diff.astype(np.int8)
@@ -175,7 +175,6 @@ def getConnected(right_angles, img):
             p1 = right_angles[i]
             p2 = right_angles[j]
             connected = checkIfPointsAreConnected(p1, p2, img)
-            print p1, p2, connected
             if connected:
                 s.append((p1, p2))
     return s
@@ -210,23 +209,55 @@ def getRectangleVertices(diff, points):
     to_show[p2] = 2
     to_show[h1] = 2
     to_show[h2] = 2
-
-    print (p1,p2,h1,h2)
-    io.imshow(to_show)
-    io.show()
     return(p1,p2,h1,h2)
 
-def transformImage(image_number):
+def transformImage(image_number,inverted, upside_down):
     img, points = read_img(image_number)
     vertices = getRectangleVertices(img, points)
+    img = io.imread('sets/set8/' + str(image_number) + '.png')>127
 
-    img = io.imread('sets/set7/' + str(image_number) + '.png')>127
-
-    pts1 = np.float32([vertices[0][::-1],vertices[2][::-1],vertices[3][::-1],vertices[1][::-1]])
-    pts2 = np.float32([[0,0],[0,300],[500,300],[500,0]])
+    if inverted:
+        pts1 = np.float32([vertices[1][::-1],vertices[3][::-1],vertices[2][::-1],vertices[0][::-1]])
+    else:
+        pts1 = np.float32([vertices[0][::-1],vertices[2][::-1],vertices[3][::-1],vertices[1][::-1]])
+    if upside_down:
+        pts2 = np.float32([[0,0],[0,600*distance(pts1[0],pts1[1])/(distance(pts1[0],pts1[1])+distance(pts1[3],pts1[2]))],[800,600*distance(pts1[2],pts1[3])/(distance(pts1[0],pts1[1])+distance(pts1[3],pts1[2]))],[800,0]])
+    else:
+        pts2 = np.float32([[0,599],[0,600*distance(pts1[2],pts1[3])/(distance(pts1[2],pts1[3])+distance(pts1[1],pts1[0]))],[800,600*distance(pts1[0],pts1[1])/(distance(pts1[0],pts1[1])+distance(pts1[2],pts1[3]))],[800,599]])
     M = cv2.getPerspectiveTransform(pts1,pts2)
+    return revertTransformation(img,M)
 
-    io.imshow(revertTransformation(img,M))
-    io.show()
 
-transformImage(13)
+
+def compareImg(img, image_number):
+    # fig = plt.figure()
+    # fig.add_subplot(1,5,1)
+    # plt.imshow(transformImage(image_number,True,True))
+    # fig.add_subplot(1,5,2)
+    # plt.imshow(np.bitwise_xor(img,transformImage(image_number,True,True))) 
+    # fig.add_subplot(1,5,3)
+    # plt.imshow(img)
+    # fig.add_subplot(1,5,4)
+    # plt.imshow(np.bitwise_xor(img,transformImage(image_number,False,True)))
+    # fig.add_subplot(1,5,5)
+    # plt.imshow(transformImage(image_number,False,True))
+    # plt.show()
+
+    sum1 = np.sum(np.bitwise_xor(img,transformImage(image_number,True,True)))
+    sum2 = np.sum(np.bitwise_xor(img,transformImage(image_number,False,True)))
+    print image_number, str(sum1) +"   "+str( sum2)
+    return max(sum1,sum2)
+transformImage(6,False,True)
+for i in range(20):
+    maxx=0
+    best = -1
+    img = transformImage(i,False,False)
+    for j in range(60):
+        if j == i:
+            continue
+        temporal = compareImg(img,j)
+        if maxx<temporal:
+            maxx = temporal
+            best = j
+    print str(best)
+        
