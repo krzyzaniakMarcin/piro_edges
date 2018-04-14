@@ -224,12 +224,47 @@ def transformImage(image_number):
 def getImageEdge(image_number):
     img = zip(*transformImage(image_number))
     tab = []
-    for c in img:
-        tab.append(600 - np.nonzero(c)[0][0])
-    return tab[5:-5]
-        
-edge = getImageEdge(0)
+    for c in img[5:-5]:
+        zero = np.nonzero(c)[0]
+        if len(zero) > 0:
+            tab.append(600 - zero[0])
+        else:
+            tab.append(0)
+    minn = min(tab)
+    return np.array((map(lambda x: x - minn, tab)))
 
-fig = plt.figure()
-plt.plot(edge)
-plt.show()
+IMAGES = 20
+edges = {}
+for i in range(IMAGES):
+    print(i)
+    edge = getImageEdge(i)
+    maxx = max(edge)
+    rev = np.array((map(lambda x: maxx - x, edge)))
+    edges[i] = [edge, edge[::-1], rev, rev[::-1]]
+
+for l in range(IMAGES):
+    super_edge = edges[l][0]
+    minn = []
+    for i in range(IMAGES):
+        if i != l:
+            cur_min = 99999999
+            for edge in edges[i]:
+                diff = map(abs, edge - super_edge)
+                fig = plt.figure()
+                fig.add_subplot(1,5,1)
+                plt.plot(super_edge)
+                fig.add_subplot(1,5,2)
+                plt.plot(edge)
+                fig.add_subplot(1,5,3)
+                plt.plot(diff)
+                fig.add_subplot(1,5,4)
+                plt.imshow(transformImage(l))
+                fig.add_subplot(1,5,5)
+                plt.imshow(transformImage(i))
+                plt.show()
+                diff = sum(diff)
+                if diff < cur_min:
+                    cur_min = diff
+            minn.append((cur_min, i))
+    rank = sorted(minn, key = lambda x: x[0])
+    print rank[0:5]
