@@ -145,7 +145,6 @@ def read_img(num):
 def get_hull(points, img):
     hull = points[ConvexHull(points).vertices]
     hull = list(map(tuple, hull))
-    hull = list(filter(lambda x : getAngle(x, 15,img) < 170, hull))
     return hull
 
 def get_right_angles(hull, img):
@@ -269,9 +268,9 @@ for sett in SETS:
         edges[i] = [edge, edge[::-1], rev, rev[::-1]]
     xd = np.copy(fifolowe)
     print(len(xd))
-    #for f in xd:
-    #    transformImage(f, True)
-    fifolowe_all.extend(fifolowe)
+    for f in xd:
+        transformImage(f, True)
+    fifolowe_all.extend(xd)
     fifolowe = []
     print(len(fifolowe_all))
         
