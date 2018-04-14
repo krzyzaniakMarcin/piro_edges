@@ -170,7 +170,23 @@ def get_right_angles(hull, img):
         if not added:
             groups[point] = [point]
 
-    right_angles = [tab[len(tab)/2] for tab in groups.values()]
+    right_angles = []
+    for group in groups.values():
+        if len(group) == 1:
+            right_angles.append(group[0])
+        else:
+            best = group[len(group)/2]
+            points = getIntersectionWithSquare(img,best,15)
+            p1 = np.array(points[0])
+            p2 = np.array(points[1])
+            maxx = 0
+            for p in group:
+                point = np.array(p)
+                d = np.linalg.norm(np.cross(p2-p1, p1-point))/np.linalg.norm(p2-p1)
+                if d > maxx:
+                    maxx = d
+                    best = p
+            right_angles.append(best)
     return right_angles
 
 def getConnected(right_angles, img):
