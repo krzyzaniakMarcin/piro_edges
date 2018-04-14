@@ -181,8 +181,9 @@ def getConnected(right_angles, img):
             if connected:
                 s.append((p1, p2))
     return s
-
-def getRectangleVertices(diff, points):
+fifolowe = []
+def getRectangleVertices(diff, points, image_number, show = False):
+    global fifolowe
     hull = get_hull(points,diff)
     right_angles = get_right_angles(hull,diff)
     to_show = np.copy(diff)
@@ -205,18 +206,23 @@ def getRectangleVertices(diff, points):
                     if d2 > ok[1]:
                         ok[1] = d2
                         h2 = h
-        if min(ok) > best[4]:
-            best = (p1, p2, h1, h2, min(ok))
+        if ok[0] > 0 and ok[1] > 0 and distance(p1, p2) > best[4]:
+            best = (p1, p2, h1, h2, distance(p1, p2))
     p1, p2, h1, h2, _ = best
-    to_show[p1] = 2
-    to_show[p2] = 2
+    if ((0,0), (1,1), (0,0), (0,0), 0) == best:
+        fifolowe.append(image_number)
+    to_show[p1] = 3
+    to_show[p2] = 3
     to_show[h1] = 2
     to_show[h2] = 2
+    if show:
+        plt.imshow(to_show)
+        plt.show()
     return(p1,p2,h1,h2)
 
-def transformImage(image_number):
+def transformImage(image_number, show = False):
     img, points = read_img(image_number)
-    vertices = getRectangleVertices(img, points)
+    vertices = getRectangleVertices(img, points, image_number, show)
     img = io.imread('sets/set' + str(SET) + '/' + str(image_number) + '.png')>127
 
     pts1 = np.float32([vertices[0][::-1],vertices[2][::-1],vertices[3][::-1],vertices[1][::-1]])
@@ -247,6 +253,8 @@ for i in range(IMAGES):
     rev = np.array((map(lambda x: maxx - x, edge)))
     edges[i] = [edge, edge[::-1], rev, rev[::-1]]
 
+file = open('sets/set' + str(SET) + '/' + 'correct.txt', "r")
+score = 0
 for l in range(IMAGES):
     super_edge = edges[l][0]
     minn = []
@@ -275,15 +283,30 @@ for l in range(IMAGES):
             minn.append((cur_min, i, min_i))
     rank = sorted(minn, key = lambda x: x[0])
     lol = rank[0]
-    print(lol[0:2])
-    fig = plt.figure()
-    fig.add_subplot(2,2,1)
-    plt.plot(super_edge)
-    plt.plot(lol[2])
-    fig.add_subplot(2,2,2)
-    plt.plot(map(abs, super_edge - lol[2]))
-    fig.add_subplot(2,2,3)
-    plt.imshow(transformImage(l))
-    fig.add_subplot(2,2,4)
-    plt.imshow(transformImage(lol[1]))
-    plt.show()
+    line = int(file.readline())
+    bad = True
+    for asd in range(5):
+        if line == rank[asd][1]:
+            score +=1.0/(asd+1.0)
+            bad = False
+    if bad and line not in fifolowe and l not in fifolowe:
+        print "ZLE W KIT"
+        print 'current: ', l, 'correct: ', line, 'choosed: ', lol[1]
+        transformImage(l, True)
+        transformImage(line, True)
+        fig = plt.figure()
+        fig.add_subplot(2,3,1)
+        plt.plot(super_edge)
+        plt.plot(lol[2])
+        fig.add_subplot(2,3,2)
+        plt.plot(map(abs, super_edge - lol[2]))
+        fig.add_subplot(2,3,4)
+        plt.imshow(transformImage(l))
+        fig.add_subplot(2,3,5)
+        plt.imshow(transformImage(lol[1]))
+        fig.add_subplot(2,3,3)
+        plt.plot(getImageEdge(line))
+        fig.add_subplot(2,3,6)
+        plt.imshow(transformImage(line))
+        plt.show()
+print score
