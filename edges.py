@@ -15,6 +15,7 @@ IMAGES = 100
 SET = 8
 
 SETS = [(0,6), (1,20), (2,20), (3,20), (4,20), (5,200),(6,200),(7,20),(8,100)]
+#SETS = [(0,6)]
 
 def removeBlankRows(image):
     x_begin = -1
@@ -153,7 +154,7 @@ def get_right_angles(hull, img):
         if img[x][y]:
             angle_big, angle_small = 0, 0
 
-            angle_big = 90-abs(90-getAngle((x, y), 30,img))
+            angle_big = 90-abs(90-getAngle((x, y), 25,img))
             angle_small = 90-abs(90-getAngle((x, y), 10,img))
 
             if angle_small > 65 and angle_big > 65:
@@ -213,11 +214,16 @@ def getRectangleVertices(diff, points, image_number, show = False):
     p1, p2, h1, h2, _ = best
     if ((0,0), (1,1), (0,0), (0,0), 0) == best:
         fifolowe.append(image_number)
-    to_show[p1] = 3
-    to_show[p2] = 3
-    to_show[h1] = 2
-    to_show[h2] = 2
+    to_show[p1] = 4
+    to_show[p2] = 4
+    to_show[h1] = 3
+    to_show[h2] = 3
+    for h in hull:
+        to_show[h] = 2
+    for r in right_angles:
+        to_show[r] = 3
     if show:
+        print(right_angles)
         plt.imshow(to_show)
         plt.show()
     return(p1,p2,h1,h2)
@@ -250,6 +256,7 @@ score = 0
 
 good = []
 baad = []
+fifolowe_all = []
 for sett in SETS:
     SET = sett[0]
     IMAGES = sett[1]
@@ -262,8 +269,11 @@ for sett in SETS:
         edges[i] = [edge, edge[::-1], rev, rev[::-1]]
     xd = np.copy(fifolowe)
     print(len(xd))
-    # for f in xd:
-    #     transformImage(f, True)
+    #for f in xd:
+    #    transformImage(f, True)
+    fifolowe_all.extend(fifolowe)
+    fifolowe = []
+    print(len(fifolowe_all))
         
     file = open('sets/set' + str(SET) + '/' + 'correct.txt', "r")
     sure = []
