@@ -211,53 +211,25 @@ def getRectangleVertices(diff, points):
     to_show[h2] = 2
     return(p1,p2,h1,h2)
 
-def transformImage(image_number,inverted, upside_down):
+def transformImage(image_number):
     img, points = read_img(image_number)
     vertices = getRectangleVertices(img, points)
     img = io.imread('sets/set8/' + str(image_number) + '.png')>127
 
-    if inverted:
-        pts1 = np.float32([vertices[1][::-1],vertices[3][::-1],vertices[2][::-1],vertices[0][::-1]])
-    else:
-        pts1 = np.float32([vertices[0][::-1],vertices[2][::-1],vertices[3][::-1],vertices[1][::-1]])
-    if upside_down:
-        pts2 = np.float32([[0,0],[0,600*distance(pts1[0],pts1[1])/(distance(pts1[0],pts1[1])+distance(pts1[3],pts1[2]))],[800,600*distance(pts1[2],pts1[3])/(distance(pts1[0],pts1[1])+distance(pts1[3],pts1[2]))],[800,0]])
-    else:
-        pts2 = np.float32([[0,599],[0,600*distance(pts1[2],pts1[3])/(distance(pts1[2],pts1[3])+distance(pts1[1],pts1[0]))],[800,600*distance(pts1[0],pts1[1])/(distance(pts1[0],pts1[1])+distance(pts1[2],pts1[3]))],[800,599]])
+    pts1 = np.float32([vertices[0][::-1],vertices[2][::-1],vertices[3][::-1],vertices[1][::-1]])
+    pts2 = np.float32([[0,599],[0,600*distance(pts1[2],pts1[3])/(distance(pts1[2],pts1[3])+distance(pts1[1],pts1[0]))],[800,600*distance(pts1[0],pts1[1])/(distance(pts1[0],pts1[1])+distance(pts1[2],pts1[3]))],[800,599]])
     M = cv2.getPerspectiveTransform(pts1,pts2)
-    return revertTransformation(img,M)
+    return revertTransformation(img,M)[:,:,0]>127
 
-
-
-def compareImg(img, image_number):
-    # fig = plt.figure()
-    # fig.add_subplot(1,5,1)
-    # plt.imshow(transformImage(image_number,True,True))
-    # fig.add_subplot(1,5,2)
-    # plt.imshow(np.bitwise_xor(img,transformImage(image_number,True,True))) 
-    # fig.add_subplot(1,5,3)
-    # plt.imshow(img)
-    # fig.add_subplot(1,5,4)
-    # plt.imshow(np.bitwise_xor(img,transformImage(image_number,False,True)))
-    # fig.add_subplot(1,5,5)
-    # plt.imshow(transformImage(image_number,False,True))
-    # plt.show()
-
-    sum1 = np.sum(np.bitwise_xor(img,transformImage(image_number,True,True)))
-    sum2 = np.sum(np.bitwise_xor(img,transformImage(image_number,False,True)))
-    print image_number, str(sum1) +"   "+str( sum2)
-    return max(sum1,sum2)
-transformImage(6,False,True)
-for i in range(20):
-    maxx=0
-    best = -1
-    img = transformImage(i,False,False)
-    for j in range(60):
-        if j == i:
-            continue
-        temporal = compareImg(img,j)
-        if maxx<temporal:
-            maxx = temporal
-            best = j
-    print str(best)
+def getImageEdge(image_number):
+    img = zip(*transformImage(image_number))
+    tab = []
+    for c in img:
+        tab.append(600 - np.nonzero(c)[0][0])
+    return tab[5:-5]
         
+edge = getImageEdge(0)
+
+fig = plt.figure()
+plt.plot(edge)
+plt.show()
