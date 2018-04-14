@@ -14,7 +14,7 @@ from skimage import data, io, filters
 IMAGES = 100
 SET = 8
 
-SETS = [(1,20), (2,20), (3,20), (4,20), (5,200),(6,200),(7,20),(8,100)]
+SETS = [(0,6), (1,20), (2,20), (3,20), (4,20), (5,200),(6,200),(7,20),(8,100)]
 
 def removeBlankRows(image):
     x_begin = -1
@@ -197,13 +197,13 @@ def getRectangleVertices(diff, points, image_number, show = False):
         h1 = h2 = 0
         for h in hull:
             d1 = distance(p1, h)
-            if d1 > 40:
+            if d1 > 10:
                 if checkIfPointsAreConnected(p1, h, diff) and not checkIfPointsAreConnected(p2, h, diff):
                     if d1 > ok[0]:
                         ok[0] = d1
                         h1 = h
             d2 = distance(p2, h)
-            if d2 > 40:
+            if d2 > 10:
                 if checkIfPointsAreConnected(p2, h, diff) and not checkIfPointsAreConnected(p1, h, diff):
                     if d2 > ok[1]:
                         ok[1] = d2
@@ -235,7 +235,7 @@ def transformImage(image_number, show = False):
 def getImageEdge(image_number):
     img = zip(*transformImage(image_number))
     tab = []
-    for c in img[5:-5]:
+    for c in img[15:-15]:
         zero = np.nonzero(c)[0]
         if len(zero) > 0:
             tab.append(600 - zero[0])
@@ -248,6 +248,8 @@ def getImageEdge(image_number):
     return np.array((map(lambda x: ((x - minn) / float(maxx - minn)) * 250, tab)))
 score = 0
 
+good = []
+baad = []
 for sett in SETS:
     SET = sett[0]
     IMAGES = sett[1]
@@ -258,15 +260,20 @@ for sett in SETS:
         maxx = max(edge)
         rev = np.array((map(lambda x: maxx - x, edge)))
         edges[i] = [edge, edge[::-1], rev, rev[::-1]]
+    xd = np.copy(fifolowe)
+    print(len(xd))
+    # for f in xd:
+    #     transformImage(f, True)
         
     file = open('sets/set' + str(SET) + '/' + 'correct.txt', "r")
+    sure = []
+    ranks = []
     for l in range(IMAGES):
         super_edge = edges[l][0]
         minn = []
         for i in range(IMAGES):
             if i != l:
                 cur_min = 99999999
-                min_i = 0
                 for edge in edges[i]:
                     diff = map(abs, edge - super_edge)
                     # fig = plt.figure()
@@ -284,35 +291,19 @@ for sett in SETS:
                     diff = sum(diff)
                     if diff < cur_min:
                         cur_min = diff
-                        min_i = edge
-                minn.append((cur_min, i, min_i))
+                minn.append((cur_min, i))
         rank = sorted(minn, key = lambda x: x[0])
-        lol = rank[0]
-        line = int(file.readline())
-        bad = True
-        for asd in range(5):
-            if line == rank[asd][1]:
-                score +=1.0/(asd+1.0)
-                bad = False
-        if bad and line not in fifolowe and l not in fifolowe:
-            print "ZLE W KIT"
-            print 'current: ', l, 'correct: ', line, 'choosed: ', lol[1]
-            # transformImage(l, True)
-            # transformImage(line, True)
-            # fig = plt.figure()
-            # fig.add_subplot(2,3,1)
-            # plt.plot(super_edge)
-            # plt.plot(lol[2])
-            # fig.add_subplot(2,3,2)
-            # plt.plot(map(abs, super_edge - lol[2]))
-            # fig.add_subplot(2,3,4)
-            # plt.imshow(transformImage(l))
-            # fig.add_subplot(2,3,5)
-            # plt.imshow(transformImage(lol[1]))
-            # fig.add_subplot(2,3,3)
-            # plt.plot(getImageEdge(line))
-            # fig.add_subplot(2,3,6)
-            # plt.imshow(transformImage(line))
-            # plt.show()
+        if rank[0][0] < 15000:
+            sure.append(rank[0][1])
+        ranks.append(rank)
+    not_sure = [x for x in range(IMAGES) if x not in sure]
+    for y in not_sure:
+        while ranks[y][0][1] in sure:
+            del ranks[y][0]
+    for row in ranks:
+        correct = int(file.readline())
+        for asd in range(len(row)):
+            if correct == row[asd][1]:
+                score += 1.0/(asd+1.0)
     print score
 print score
