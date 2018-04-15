@@ -6,7 +6,7 @@
 \usepackage{nicefrac}
 \usepackage{listings}
 
-\author{Marcin Krzyżaniak  \\ Maciej Spychala}
+\author{Marcin Krzyżaniak  \\ Maciej Spychała}
 
 \title{Przetwarzanie i rozpoznawanie obrazu\\ 
 \large{{\bf Sprawozdanie} \\ Projekt 1}} 
@@ -17,8 +17,23 @@
 
 \section{Przetwarzanie obrazu}
 \begin{enumerate}
-\item lolxd
+\item Obraz wejsciowy poddajemy dylatacji.
+\item Od obrazu poddanego dylatacji odejmujemy wejsciowy obraz. W ten sposób otrzymujemy sam kontur obrazu.
+\item Za pomocą funkcji ConvexHull z biblioteki scipy znajdujemy otoczkę wypukłą konturu.
+\item Dla każdego punktu w otoczce obliczamy kąt jaki tworzą wychodzące z niego odcinki. Jeżeli kąt jest większy niż 65 i mniejszy niż 115, wtedy traktujemy go jako potencjalny wierzchołek przy podstawie naszej figury.
+\item Punkty na otoczce z odpowiednim kątem grupujemy wg. odległości od siebie, tzn. tworzymy grupy punktów leżących blisko siebie.
+\item Dla każdej grupy punktów prowadzimy prostą od pierwszego do ostatniego punktu i jako potencjalny wierzchołek prostokąta traktujemy punkt z grupy o największej odległości od tej prostej.
+\item Dla ''najlepszych'' punktów z każdej grupy wybieramy te 2, które są połączone odcinkiem i mają największą odległość od siebie. To są wierzchołki wejściowego prostokąta.
+\item Dla obu wierzchołków szukamy punktu z otoczki który jest połączony z wierzchołkiem odcinkiem i posiada największą odległość od niego, ale nie leży na odcinku łączącym wierzchołki. Otrzymane punkty traktujemy jako miejsce przecięcia.
+\item Mając 4 punkty, znajdujemy przekształcenie perspektywiczne metodą getPerspectiveTransform z biblioteki OpenCV, a następnie odwracamy je tak aby krawędź prostokąta była dolną ktawędzią obrazu po przekształceniu, a punkty przecięcia byly na bocznych krawędziach obrazu w proporcjach takich jak przed przekształceniem.
+\item Na podstawie otrzymanego obrazu tworzymy wektor wartości na krawędziach. Każda kolejna liczba w wektorze to suma zapalonych pikseli w kolejnej kolumnie. Następnie od każdej wartości odejmujemy najmniejszą wartość z otrzymanego wektora, a następnie normalizujemy aby wartości należały do przedziału  (0,249).
+\item Tak otrzymany wektor można interpretować jako znormalizowaną krzywą przecięcia prostokąta, czyli to co w dalszej części programu użyjemy do rozpoznawania obrazu.
 \end{enumerate}
+\subsection{Mierzenie kątów}
+Aby zmierzyć kąt jaki tworzą odcinki wychodzące z wierzchłka, skanujemy miejsca przecięcia kwadratu, , którego środek jest badanym wierzchołkiem, z tymi odcinkami, a następnie wyznaczamy kąt (przecięcie\_1, wierzchołek, przecięcie\_2). Jeżeli w naszym kwadracie występują więcej niż 2 przecięcia uznajemy, że dany wierzchłek na pewno leży na krzywej, a więc nie jest wierzchołkiem prostokąta.
+
+\section{Rozpoznawanie obrazu}
+Dla każdego wektora (obrazka) obliczamy sumę wartości bezwzględnych rożnic kolejnych kolumn z każdym innym wektorem. Z racji tego, że nie wiemy czy nasz obraz nie został przypadkiem odbity lustrzanie podczas transformacji, dla każdego wektora wybieramy najlepszą (najmniejszą) sumę z 4 przekształceń (normalny obraz, odbicie w poziomi, odbicie w pionie, odbicie w pionie i poziomie). Następnie tworzymy ranking dopasowań obrazków, na podstawie tych sum (najmniejsza suma to najmniejsza rożnica krzywych, a więc najlepsze dopasowanie). Aby nie dopasowywać niepewnych obrazków do tych, których parę znaleźliśmy prawdopodobnie perfekcyjnie, wprowadziliśmy próg sumy, poniżej którego uznajemy nasze rozpozanie za pewne. Następnie usuwamy z rankingów obrazków niepewnych, wszystkie obrazki z początku rankingu, które wskazałiśmy jako pewne.
 \bigskip
 \noindent
 

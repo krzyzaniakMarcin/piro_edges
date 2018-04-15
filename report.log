@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6650) (preloaded format=pdflatex 2018.4.13)  15 APR 2018 23:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6650) (preloaded format=pdflatex 2018.4.13)  15 APR 2018 23:44
 entering extended mode
 **./report.tex
 (report.tex
@@ -200,26 +200,85 @@ LaTeX Font Info:    Try loading font information for U+lasy on input line 16.
 
 (/home/dzik_marcin/.miktex/texmfs/install/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
-) [1
+)
+Overfull \hbox (15.19006pt too wide) in paragraph at lines 25--26
+[]\OT4/cmr/m/n/10.95 Dla ka»dej grupy punktów prowadzimy prost¡ od pierwszego d
+o ostatniego
+ []
 
-{/home/dzik_marcin/.miktex/texmfs/data/pdftex/config/pdftex.map}] (report.aux) 
-) 
+
+Overfull \hbox (9.41109pt too wide) in paragraph at lines 27--28
+\OT4/cmr/m/n/10.95 nie le»y na odcinku ª¡cz¡cym wierzchoªki. Otrzymane punkty t
+raktujemy
+ []
+
+
+Overfull \hbox (36.02559pt too wide) in paragraph at lines 28--29
+\OT4/cmr/m/n/10.95 je tak aby kraw¦d¹ prostok¡ta byªa doln¡ ktaw¦dzi¡ obrazu po
+ przeksztaªceniu,
+ []
+
+
+Overfull \hbox (5.15251pt too wide) in paragraph at lines 28--29
+\OT4/cmr/m/n/10.95 a punkty przeci¦cia byly na bocznych kraw¦dziach obrazu w pr
+oporcjach
+ []
+
+[1
+
+{/home/dzik_marcin/.miktex/texmfs/data/pdftex/config/pdftex.map}]
+Overfull \hbox (32.37544pt too wide) in paragraph at lines 29--30
+[]\OT4/cmr/m/n/10.95 Na podstawie otrzymanego obrazu tworzymy wektor warto±ci n
+a kraw¦dziach.
+ []
+
+
+Overfull \hbox (9.56294pt too wide) in paragraph at lines 29--30
+\OT4/cmr/m/n/10.95 kolumnie. Nast¦pnie od ka»dej warto±ci odejmujemy najmniejsz
+¡ warto±¢
+ []
+
+
+Overfull \hbox (10.14095pt too wide) in paragraph at lines 29--30
+\OT4/cmr/m/n/10.95 z otrzymanego wektora, a nast¦pnie normalizujemy aby warto±c
+i nale»aªy
+ []
+
+
+Overfull \hbox (11.26627pt too wide) in paragraph at lines 30--31
+[]\OT4/cmr/m/n/10.95 Tak otrzymany wektor mo»na interpretowa¢ jako znormalizowa
+n¡ krzyw¡
+ []
+
+
+Overfull \hbox (14.33833pt too wide) in paragraph at lines 36--39
+\OT4/cmr/m/n/10.95 odbicie w pionie i poziomie). Nast¦pnie tworzymy ranking dop
+asowa« obrazków,
+ []
+
+
+Overfull \hbox (17.74503pt too wide) in paragraph at lines 36--39
+\OT4/cmr/m/n/10.95 do tych, których par¦ znale¹li±my prawdopodobnie perfekcyjni
+e, wprowadzili±my
+ []
+
+[2] (report.aux) ) 
 Here is how much of TeX's memory you used:
- 2513 strings out of 494894
- 35022 string characters out of 3178372
- 96023 words of memory out of 3000000
- 6132 multiletter control sequences out of 15000+200000
+ 2514 strings out of 494894
+ 35040 string characters out of 3178372
+ 99024 words of memory out of 3000000
+ 6133 multiletter control sequences out of 15000+200000
  10442 words of font info for 33 fonts, out of 3000000 for 9000
  0 hyphenation exceptions out of 8191
- 26i,6n,32p,189b,217s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/home/dzik_marcin/.miktex/texmfs/install/fonts/enc/dvips/pl/plrm.enc}</home/d
-zik_marcin/.miktex/texmfs/install/fonts/type1/public/pl/plbx12.pfb></home/dzik_
-marcin/.miktex/texmfs/install/fonts/type1/public/pl/plr10.pfb></home/dzik_marci
-n/.miktex/texmfs/install/fonts/type1/public/pl/plr12.pfb></home/dzik_marcin/.mi
-ktex/texmfs/install/fonts/type1/public/pl/plr17.pfb>
-Output written on report.pdf (1 page, 28082 bytes).
+ 26i,6n,32p,895b,217s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/home/dzik_marcin/.miktex/texmfs/install/fonts/enc/dvips/pl/
+plrm.enc}</home/dzik_marcin/.miktex/texmfs/install/fonts/type1/public/pl/plbx12
+.pfb></home/dzik_marcin/.miktex/texmfs/install/fonts/type1/public/pl/plr10.pfb>
+</home/dzik_marcin/.miktex/texmfs/install/fonts/type1/public/pl/plr12.pfb></hom
+e/dzik_marcin/.miktex/texmfs/install/fonts/type1/public/pl/plr17.pfb>
+Output written on report.pdf (2 pages, 43103 bytes).
 PDF statistics:
- 23 PDF objects out of 1000 (max. 8388607)
+ 26 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
