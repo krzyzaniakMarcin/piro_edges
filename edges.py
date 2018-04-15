@@ -1,21 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import skimage.io as io
-import skimage.data as data
-import skimage.color as color
-import skimage
-from scipy.misc import toimage
+import sys
 import cv2
-import matplotlib as mpl
 import scipy.ndimage as ndimage
 from scipy.spatial import ConvexHull
-from skimage import data, io, filters
-
-IMAGES = 100
-SET = 8
-
-SETS = [(0,6), (1,20), (2,20), (3,20), (4,20), (5,200),(6,200),(7,20),(8,100)]
-SETS = [(8,100)]
 
 def removeBlankRows(image):
     x_begin = -1
@@ -119,7 +107,6 @@ def getAngle((x,y), radious, img, when_no_angle = 0):
     else:
         return when_no_angle
 
-# get edges 
 def revertTransformation(img, transformation):
     rgbArray = np.zeros((len(img),len(img[0]),3), 'uint8')
     rgbArray[..., 0] = img*255
@@ -128,7 +115,7 @@ def revertTransformation(img, transformation):
     return cv2.warpPerspective(rgbArray,transformation,(800,600))
 
 def read_img(num):
-    img = io.imread('sets/set' + str(SET) + '/' + str(num) + '.png')>127
+    img = io.imread(SET + '/' + str(num) + '.png')>127
     img_dilatation = ndimage.binary_dilation(img)
     diff = img_dilatation != img
     diff = diff.astype(np.int8)
@@ -227,16 +214,11 @@ def getRectangleVertices(diff, points):
     p1, p2, h1, h2, _ = best
 
     return(p1,p2,h1,h2)
-def hist(array):
-    xd = np.zeros(300)
-    for i in array:
-        xd[int(i/10)] += 1
-    return xd
 
 def transformImage(image_number):
     img, points = read_img(image_number)
     vertices = getRectangleVertices(img, points)
-    img = io.imread('sets/set' + str(SET) + '/' + str(image_number) + '.png')>127
+    img = io.imread(SET + '/' + str(image_number) + '.png')>127
 
     pts1 = np.float32([vertices[0][::-1],vertices[2][::-1],vertices[3][::-1],vertices[1][::-1]])
     pts2 = np.float32([[0,599],[0,600*distance(pts1[2],pts1[3])/(distance(pts1[2],pts1[3])+distance(pts1[1],pts1[0]))],[800,600*distance(pts1[0],pts1[1])/(distance(pts1[0],pts1[1])+distance(pts1[2],pts1[3]))],[800,599]])
@@ -259,72 +241,42 @@ def getImageEdge(image_number):
     return np.array((map(lambda x: ((x - minn) / float(maxx - minn)) * 250, tab)))
 score = 0
 
-for sett in SETS:
-    SET = sett[0]
-    IMAGES = sett[1]
-    edges = {}
+SET = sys.argv[1]
+IMAGES = int(sys.argv[2])
+edges = {}
+for i in range(IMAGES):
+    edge = getImageEdge(i)
+    maxx = max(edge)
+    rev = np.array((map(lambda x: maxx - x, edge)))
+    edges[i] = [edge, edge[::-1], rev, rev[::-1]]
+    
+sure = []
+ranks = []
+for l in range(IMAGES):
+    super_edge = edges[l][0]
+    minn = []
     for i in range(IMAGES):
-        print(i)
-        edge = getImageEdge(i)
-        maxx = max(edge)
-        rev = np.array((map(lambda x: maxx - x, edge)))
-        edges[i] = [edge, edge[::-1], rev, rev[::-1]]
-        
-    file = open('sets/set' + str(SET) + '/' + 'correct.txt', "r")
-    sure = []
-    ranks = []
-    for l in range(IMAGES):
-        super_edge = edges[l][0]
-        minn = []
-        for i in range(IMAGES):
-            if i != l:
-                cur_min = 99999999
-                n = 0
-                for idx, edge in enumerate(edges[i]):
-                    diff = map(abs, edge - super_edge)
-              
-                    diff = sum(diff)
-                    if diff < cur_min:
-                        cur_min = diff
-                        n = idx
-                minn.append((cur_min, i, n))
-        rank = sorted(minn, key = lambda x: x[0])
-        if rank[0][0] < 15000:
-            sure.append(rank[0][1])
-        ranks.append(rank)
-    not_sure = [x for x in range(IMAGES) if x not in sure]
-    for y in not_sure:
-        while ranks[y][0][1] in sure:
-            del ranks[y][0]
-    for idx, row in enumerate(ranks):
-        correct = int(file.readline())
-        bad = True
-        for asd in range(len(row)):
-            if correct == row[asd][1]:
-                score += 1.0/(asd+1.0)
-                bad = False
-            else:
-                break
-        if bad:
-            print(sum(map(abs, edges[idx][0] - edges[row[0][1]][row[0][2]])))
-            fig = plt.figure()
-            fig.add_subplot(2,3,1)
-            plt.plot(edges[idx][0])
-            plt.plot(edges[row[0][1]][row[0][2]])
-            fig.add_subplot(2,3,2)
-            plt.plot(edges[idx][0])
-            plt.plot(edges[correct][2])
-            plt.plot(edges[correct][3])
-            fig.add_subplot(2,3,3)
-            plt.plot(hist(edges[idx][0]))
-            plt.plot(hist(edges[row[0][1]][row[0][2]]))
-            plt.plot(hist(edges[correct][2]))
-            fig.add_subplot(2,3,4)
-            plt.imshow(transformImage(idx))
-            fig.add_subplot(2,3,5)
-            plt.imshow(transformImage(row[0][1]))
-            fig.add_subplot(2,3,6)
-            plt.imshow(transformImage(correct))
-            plt.show()
-    print score
-print score
+        if i != l:
+            cur_min = 99999999
+            n = 0
+            for idx, edge in enumerate(edges[i]):
+                diff = map(abs, edge - super_edge)
+          
+                diff = sum(diff)
+                if diff < cur_min:
+                    cur_min = diff
+                    n = idx
+            minn.append((cur_min, i, n))
+    rank = sorted(minn, key = lambda x: x[0])
+    if rank[0][0] < 15000:
+        sure.append(rank[0][1])
+    ranks.append(rank)
+
+not_sure = [x for x in range(IMAGES) if x not in sure]
+
+for y in not_sure:
+    while ranks[y][0][1] in sure:
+        del ranks[y][0]
+
+for r in ranks:
+    print(' '.join(str(x) for x in np.array(r).astype(np.int)[:,1]))
