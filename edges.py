@@ -15,7 +15,7 @@ IMAGES = 100
 SET = 8
 
 SETS = [(0,6), (1,20), (2,20), (3,20), (4,20), (5,200),(6,200),(7,20),(8,100)]
-#SETS = [(0,6)]
+SETS = [(8,100)]
 
 def removeBlankRows(image):
     x_begin = -1
@@ -199,12 +199,10 @@ def getConnected(right_angles, img):
             if connected:
                 s.append((p1, p2))
     return s
-fifolowe = []
-def getRectangleVertices(diff, points, image_number, show = False):
-    global fifolowe
+
+def getRectangleVertices(diff, points):
     hull = get_hull(points,diff)
     right_angles = get_right_angles(hull,diff)
-    to_show = np.copy(diff)
 
     connected = getConnected(right_angles, diff)
     best = ((0,0), (1,1), (0,0), (0,0), 0)
@@ -227,25 +225,17 @@ def getRectangleVertices(diff, points, image_number, show = False):
         if ok[0] > 0 and ok[1] > 0 and distance(p1, p2) > best[4]:
             best = (p1, p2, h1, h2, distance(p1, p2))
     p1, p2, h1, h2, _ = best
-    if ((0,0), (1,1), (0,0), (0,0), 0) == best:
-        fifolowe.append(image_number)
-    to_show[p1] = 4
-    to_show[p2] = 4
-    to_show[h1] = 3
-    to_show[h2] = 3
-    for h in hull:
-        to_show[h] = 2
-    for r in right_angles:
-        to_show[r] = 3
-    if show:
-        print(right_angles)
-        plt.imshow(to_show)
-        plt.show()
-    return(p1,p2,h1,h2)
 
-def transformImage(image_number, show = False):
+    return(p1,p2,h1,h2)
+def hist(array):
+    xd = np.zeros(300)
+    for i in array:
+        xd[int(i/10)] += 1
+    return xd
+
+def transformImage(image_number):
     img, points = read_img(image_number)
-    vertices = getRectangleVertices(img, points, image_number, show)
+    vertices = getRectangleVertices(img, points)
     img = io.imread('sets/set' + str(SET) + '/' + str(image_number) + '.png')>127
 
     pts1 = np.float32([vertices[0][::-1],vertices[2][::-1],vertices[3][::-1],vertices[1][::-1]])
@@ -269,9 +259,6 @@ def getImageEdge(image_number):
     return np.array((map(lambda x: ((x - minn) / float(maxx - minn)) * 250, tab)))
 score = 0
 
-good = []
-baad = []
-fifolowe_all = []
 for sett in SETS:
     SET = sett[0]
     IMAGES = sett[1]
@@ -282,13 +269,6 @@ for sett in SETS:
         maxx = max(edge)
         rev = np.array((map(lambda x: maxx - x, edge)))
         edges[i] = [edge, edge[::-1], rev, rev[::-1]]
-    xd = np.copy(fifolowe)
-    print(len(xd))
-    for f in xd:
-        transformImage(f, True)
-    fifolowe_all.extend(xd)
-    fifolowe = []
-    print(len(fifolowe_all))
         
     file = open('sets/set' + str(SET) + '/' + 'correct.txt', "r")
     sure = []
@@ -299,24 +279,15 @@ for sett in SETS:
         for i in range(IMAGES):
             if i != l:
                 cur_min = 99999999
-                for edge in edges[i]:
+                n = 0
+                for idx, edge in enumerate(edges[i]):
                     diff = map(abs, edge - super_edge)
-                    # fig = plt.figure()
-                    # fig.add_subplot(1,5,1)
-                    # plt.plot(super_edge)
-                    # fig.add_subplot(1,5,2)
-                    # plt.plot(edge)
-                    # fig.add_subplot(1,5,3)
-                    # plt.plot(diff)
-                    # fig.add_subplot(1,5,4)
-                    # plt.imshow(transformImage(l))
-                    # fig.add_subplot(1,5,5)
-                    # plt.imshow(transformImage(i))
-                    # plt.show()
+              
                     diff = sum(diff)
                     if diff < cur_min:
                         cur_min = diff
-                minn.append((cur_min, i))
+                        n = idx
+                minn.append((cur_min, i, n))
         rank = sorted(minn, key = lambda x: x[0])
         if rank[0][0] < 15000:
             sure.append(rank[0][1])
@@ -325,10 +296,35 @@ for sett in SETS:
     for y in not_sure:
         while ranks[y][0][1] in sure:
             del ranks[y][0]
-    for row in ranks:
+    for idx, row in enumerate(ranks):
         correct = int(file.readline())
+        bad = True
         for asd in range(len(row)):
             if correct == row[asd][1]:
                 score += 1.0/(asd+1.0)
+                bad = False
+            else:
+                break
+        if bad:
+            print(sum(map(abs, edges[idx][0] - edges[row[0][1]][row[0][2]])))
+            fig = plt.figure()
+            fig.add_subplot(2,3,1)
+            plt.plot(edges[idx][0])
+            plt.plot(edges[row[0][1]][row[0][2]])
+            fig.add_subplot(2,3,2)
+            plt.plot(edges[idx][0])
+            plt.plot(edges[correct][2])
+            plt.plot(edges[correct][3])
+            fig.add_subplot(2,3,3)
+            plt.plot(hist(edges[idx][0]))
+            plt.plot(hist(edges[row[0][1]][row[0][2]]))
+            plt.plot(hist(edges[correct][2]))
+            fig.add_subplot(2,3,4)
+            plt.imshow(transformImage(idx))
+            fig.add_subplot(2,3,5)
+            plt.imshow(transformImage(row[0][1]))
+            fig.add_subplot(2,3,6)
+            plt.imshow(transformImage(correct))
+            plt.show()
     print score
 print score

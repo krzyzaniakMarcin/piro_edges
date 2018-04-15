@@ -1,0 +1,225 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6650) (preloaded format=pdflatex 2018.4.13)  15 APR 2018 23:04
+entering extended mode
+**./report.tex
+(report.tex
+LaTeX2e <2018-04-01> patch level 2
+Babel <3.18> and hyphenation patterns for 0 language(s) loaded.
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/base/size11.clo
+File: size11.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/base/latexsym.sty
+Package: latexsym 1998/08/17 v2.2e Standard LaTeX package (lasy symbols)
+\symlasy=\mathgroup4
+LaTeX Font Info:    Overwriting symbol font `lasy' in version `bold'
+(Font)                  U/lasy/m/n --> U/lasy/b/n on input line 52.
+)
+(/home/dzik_marcin/.miktex/texmfs/install/tex/generic/babel/babel.sty
+Package: babel 2018/02/14 3.18 The Babel package
+
+(/home/dzik_marcin/.miktex/texmfs/install/tex/generic/babel/switch.def
+File: switch.def 2018/02/14 3.18 Babel switching mechanism
+)
+*************************************
+* Local config file bblopts.cfg used
+*
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/arabi/bblopts.cfg
+File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
+ babel
+)
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/babel-polish/polish.ldf
+Language: polish 2005/03/31 v1.2l Polish support from the babel system
+
+(/home/dzik_marcin/.miktex/texmfs/install/tex/generic/babel/babel.def
+File: babel.def 2018/02/14 3.18 Babel common definitions
+\babel@savecnt=\count88
+\U@D=\dimen103
+
+(/home/dzik_marcin/.miktex/texmfs/install/tex/generic/babel/txtbabel.def)
+\bbl@dirlevel=\count89
+)
+
+Package babel Warning: No hyphenation patterns were preloaded for
+(babel)                the language `Polish' into the format.
+(babel)                Please, configure your TeX system to add them and
+(babel)                rebuild the format. Now I will use the patterns
+(babel)                preloaded for \language=0 instead on input line 52.
+
+\l@polish = a dialect from \language0
+Package babel Info: Making " an active character on input line 83.
+\pl@left=\dimen104
+\pl@down=\dimen105
+\pl@right=\dimen106
+\pl@temp=\dimen107
+)) (/home/dzik_marcin/.miktex/texmfs/install/tex/latex/base/inputenc.sty
+Package: inputenc 2018/04/06 v1.3b Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+)
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/polski/polski.sty
+Package: polski 2017/05/04 v1.3.4 Polish language package
+
+   Inputenc package detected. Catcodes not changed.
+   Switching to Polish text encoding and Polish maths fonts.
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/base/ot4enc.def
+File: ot4enc.def 2017/04/05 v2.0i Standard LaTeX file
+Now handling font encoding OT4 ...
+... no UTF-8 mapping file for font encoding OT4
+)
+LaTeX Font Info:    Try loading font information for OT4+cmr on input line 360.
+
+
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/polski/ot4cmr.fd
+File: ot4cmr.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
+)
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT4/cmr/bx/n on input line 360.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> OT4/cmss/m/n on input line 360.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT4/cmr/m/it on input line 360.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> OT4/cmtt/m/n on input line 360.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> OT4/cmss/bx/n on input line 360.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT4/cmr/bx/it on input line 360.
+LaTeX Font Info:    Encoding `OT1' has changed to `OT4' for symbol font
+(Font)              `operators' in the math version `normal' on input line 360.
+
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT4/cmr/m/n on input line 360.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/plm/m/it on input line 360.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/plsy/m/n on input line 360.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/plex/m/n on input line 360.
+LaTeX Font Info:    Encoding `OT1' has changed to `OT4' for symbol font
+(Font)              `operators' in the math version `bold' on input line 360.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT4/cmr/bx/n on input line 360.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/plm/b/it on input line 360.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/plsy/b/n on input line 360.
+)
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/units/nicefrac.sty
+Package: nicefrac 1998/08/04 v0.9b Nice fractions
+\L@UnitsRaiseDisplaystyle=\skip43
+\L@UnitsRaiseTextstyle=\skip44
+\L@UnitsRaiseScriptstyle=\skip45
+
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+))
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/listings/listings.sty
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+\lst@mode=\count90
+\lst@gtempboxa=\box26
+\lst@token=\toks17
+\lst@length=\count91
+\lst@currlwidth=\dimen108
+\lst@column=\count92
+\lst@pos=\count93
+\lst@lostspace=\dimen109
+\lst@width=\dimen110
+\lst@newlines=\count94
+\lst@lineno=\count95
+\lst@maxwidth=\dimen111
+
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
+\c@lstnumber=\count96
+\lst@skipnumbers=\count97
+\lst@framebox=\box27
+)
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/listings/listings.cfg
+File: listings.cfg 2015/06/04 1.6 listings configuration
+))
+Package: listings 2015/06/04 1.6 (Carsten Heinz)
+
+(report.aux)
+\openout1 = `report.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+\c@lstlisting=\count98
+LaTeX Font Info:    Try loading font information for OML+plm on input line 16.
+
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/polski/omlplm.fd
+File: omlplm.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
+)
+LaTeX Font Info:    Try loading font information for OMS+plsy on input line 16.
+
+
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/polski/omsplsy.fd
+File: omsplsy.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
+)
+LaTeX Font Info:    Try loading font information for OMX+plex on input line 16.
+
+
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/polski/omxplex.fd
+File: omxplex.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
+)
+LaTeX Font Info:    External font `plex10' loaded for size
+(Font)              <12> on input line 16.
+LaTeX Font Info:    External font `plex10' loaded for size
+(Font)              <8> on input line 16.
+LaTeX Font Info:    External font `plex10' loaded for size
+(Font)              <6> on input line 16.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 16.
+
+(/home/dzik_marcin/.miktex/texmfs/install/tex/latex/base/ulasy.fd
+File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
+) [1
+
+{/home/dzik_marcin/.miktex/texmfs/data/pdftex/config/pdftex.map}] (report.aux) 
+) 
+Here is how much of TeX's memory you used:
+ 2513 strings out of 494894
+ 35022 string characters out of 3178372
+ 96023 words of memory out of 3000000
+ 6132 multiletter control sequences out of 15000+200000
+ 10442 words of font info for 33 fonts, out of 3000000 for 9000
+ 0 hyphenation exceptions out of 8191
+ 26i,6n,32p,189b,217s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/home/dzik_marcin/.miktex/texmfs/install/fonts/enc/dvips/pl/plrm.enc}</home/d
+zik_marcin/.miktex/texmfs/install/fonts/type1/public/pl/plbx12.pfb></home/dzik_
+marcin/.miktex/texmfs/install/fonts/type1/public/pl/plr10.pfb></home/dzik_marci
+n/.miktex/texmfs/install/fonts/type1/public/pl/plr12.pfb></home/dzik_marcin/.mi
+ktex/texmfs/install/fonts/type1/public/pl/plr17.pfb>
+Output written on report.pdf (1 page, 28082 bytes).
+PDF statistics:
+ 23 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+
