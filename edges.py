@@ -107,7 +107,6 @@ def getAngle((x,y), radious, img, when_no_angle = 0):
     else:
         return when_no_angle
 
-# get edges 
 def revertTransformation(img, transformation):
     rgbArray = np.zeros((len(img),len(img[0]),3), 'uint8')
     rgbArray[..., 0] = img*255
@@ -215,11 +214,6 @@ def getRectangleVertices(diff, points):
     p1, p2, h1, h2, _ = best
 
     return(p1,p2,h1,h2)
-def hist(array):
-    xd = np.zeros(300)
-    for i in array:
-        xd[int(i/10)] += 1
-    return xd
 
 def transformImage(image_number):
     img, points = read_img(image_number)
